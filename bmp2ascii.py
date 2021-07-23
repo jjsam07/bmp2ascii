@@ -1,10 +1,5 @@
 import sys, struct, random
 
-def charset(num):
-	#['GE', 'ND', 'ER', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'EQ', 'UA', 'LI', 'TY', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'AN', 'D'+chr(random.randrange(0x21,0x40)), chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'EQ', 'UA', 'L'+chr(random.randrange(0x21,0x40)), chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'AC', 'CE', 'SS', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'TO', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'JU', 'ST', 'IC', 'E'+chr(random.randrange(0x21,0x40)), chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40))]
-	
-	return ['GE', 'ND', 'ER', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'EQ', 'UA', 'LI', 'TY', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'AN', 'D'+chr(random.randrange(0x21,0x40)), chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'EQ', 'UA', 'L'+chr(random.randrange(0x21,0x40)), chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'AC', 'CE', 'SS', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'TO', chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40)), 'JU', 'ST', 'IC', 'E'+chr(random.randrange(0x21,0x40)), chr(random.randrange(0x21, 0x40))+chr(random.randrange(0x21,0x40))][num % 27]
-
 def getData(f, addr):
 	f.seek(addr)
 	return struct.unpack('>I', f.read(4))[0]
@@ -31,7 +26,6 @@ def bmp2ascii(fin, fout):
 	arrStart = pxArrStart(fin)
 	height = imgHeight(fin)	
 	pixelData = 0
-	#counter = 0
 	boundary = range(0, width, 4)[-1:][0]
 	bitrange = 32
 	
@@ -45,18 +39,10 @@ def bmp2ascii(fin, fout):
 			for k in range(0, bitrange):
 				if (pixelData & (0x80000000 >> k)) != 0:
 					fout.write('  ')
-					#sys.stdout.write('  ')
 				else:
-					fout.write(chr(random.randrange(0x21, 0x7f))+chr(random.randrange(0x21, 0x7f)))
-					#fout.write('##')
-					#sys.stdout.write('##')
-				#counter += 1
+					fout.write('##')
 		fout.write('\n')
 		bitrange = 32
-		#counter = counter % 27
-		#sys.stdout.write('\n') 
-		
-		# GE ND ER || EQ UA LI TY || AN D| || EQ UA L| || AC CE SS || TO || JU ST IC E| ||
 	
 def main():
 	count = 1
