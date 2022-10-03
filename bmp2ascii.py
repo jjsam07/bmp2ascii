@@ -53,72 +53,72 @@ def pxAvg(f, addr):
 	px1 = struct.unpack('B', f.read(1))[0]
 	px2 = struct.unpack('B', f.read(1))[0]
 	px3 = struct.unpack('B', f.read(1))[0]
-	avg = (px1 + px2 + px3)/3
+	avg = int((px1 + px2 + px3)/3)
 	
 	if (avg >= 0) and (avg <= 7):
-		return "  "
+		return b"  "
 	elif (avg >= 8) and (avg <= 15):
-		return " `"
+		return b" `"
 	elif (avg >= 16) and (avg <= 23):
-		return "``"
+		return b"``"
 	elif (avg >= 24) and (avg <= 31):
-		return " ."
+		return b" ."
 	elif (avg >= 32) and (avg <= 39):
-		return " ~"
+		return b" ~"
 	elif (avg >= 40) and (avg <= 47):
-		return " -"
+		return b" -"
 	elif (avg >= 48) and (avg <= 55):
-		return ".."
+		return b".."
 	elif (avg >= 56) and (avg <= 63):
-		return " ,"
+		return b" ,"
 	elif (avg >= 64) and (avg <= 71):
-		return "-."
+		return b"-."
 	elif (avg >= 72) and (avg <= 79):
-		return ".~"
+		return b".~"
 	elif (avg >= 80) and (avg <= 87):
-		return " *"
+		return b" *"
 	elif (avg >= 88) and (avg <= 95):
-		return ".:"
+		return b".:"
 	elif (avg >= 96) and (avg <= 104):
-		return "--"
+		return b"--"
 	elif (avg >= 104) and (avg <= 111):
-		return "=~"
+		return b"=~"
 	elif (avg >= 112) and (avg <= 119):
-		return "=="
+		return b"=="
 	elif (avg >= 120) and (avg <= 127):
-		return "!!"
+		return b"!!"
 	elif (avg >= 128) and (avg <= 135):
-		return "ii"
+		return b"ii"
 	elif (avg >= 136) and (avg <= 143):
-		return "i?"
+		return b"i?"
 	elif (avg >= 144) and (avg <= 151):
-		return "**"
+		return b"**"
 	elif (avg >= 152) and (avg <= 159):
-		return "il"
+		return b"il"
 	elif (avg >= 160) and (avg <= 167):
-		return "//"
+		return b"//"
 	elif (avg >= 168) and (avg <= 175):
-		return "[]"
+		return b"[]"
 	elif (avg >= 176) and (avg <= 183):
-		return "[["
+		return b"[["
 	elif (avg >= 184) and (avg <= 191):
-		return ".$"
+		return b".$"
 	elif (avg >= 192) and (avg <= 199):
-		return ".#"
+		return b".#"
 	elif (avg >= 200) and (avg <= 207):
-		return ".%"
+		return b".%"
 	elif (avg >= 208) and (avg <= 215):
-		return ".@"
+		return b".@"
 	elif (avg >= 216) and (avg <= 223):
-		return "oo"
+		return b"oo"
 	elif (avg >= 224) and (avg <= 231):
-		return "$$"
+		return b"$$"
 	elif (avg >= 232) and (avg <= 239):
-		return "##"
+		return b"##"
 	elif (avg >= 240) and (avg <= 247):
-		return "%%"
+		return b"%%"
 	elif (avg >= 248) and (avg <= 255):
-		return "@@"
+		return b"@@"
 	
 def getData(f, addr):
 	f.seek(addr)
@@ -162,16 +162,16 @@ def bmp2ascii_monochrome(fin, fout):
 			pixelData = getData(fin, arrStart+j+(width*i))
 			for k in range(0, bitrange):
 				if (pixelData & (0x80000000 >> k)) != 0:
-					fout.write('  ')
+					fout.write(b'  ')
 				else:
-					fout.write('##')
-		fout.write('\n')
+					fout.write(b'##')
+		fout.write(b'\n')
 		bitrange = 32
 	
 def bmp2ascii_greyscale(fin, fout):
 	arrStart = pxArrStart(fin)
 	iwidth = imgWidth(fin)
-	width = (colorDepth(fin)*iwidth)/8
+	width = int((colorDepth(fin)*iwidth)/8)
 	height = imgHeight(fin)
 	px = 0
 	
@@ -183,7 +183,7 @@ def bmp2ascii_greyscale(fin, fout):
 			px = pxAvg(fin, arrStart+j+(width*i))
 			#fout.write("{:c}{:c}".format(px, px))
 			fout.write(px)
-		fout.write('\n')
+		fout.write(b'\n')
 
 def main():
 	count = 1
