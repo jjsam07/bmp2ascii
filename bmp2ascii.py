@@ -47,78 +47,125 @@ def isprint(c):
 		return c
 	else:
 		return random.randrange(0x20, 0x7E)
-             
-def pxAvg(f, addr):
+
+def pxAvg(f, addr, n_bytes):
+	chars = ' .!-+VJM'
+	len_chars = len(chars) - 1
 	f.seek(addr)
 	px1 = struct.unpack('B', f.read(1))[0]
-	px2 = struct.unpack('B', f.read(1))[0]
-	px3 = struct.unpack('B', f.read(1))[0]
-	avg = int((px1 + px2 + px3)/3)
+	px2 = 0
+	px3 = 0
+	if n_bytes > 1: px2 = struct.unpack('B', f.read(1))[0]
+	if n_bytes > 2: px3 = struct.unpack('B', f.read(1))[0]
+	avg = int((((px1 + px2 + px3)/n_bytes)/255) * len_chars) # subtract from 255 for a negative "color"
+	if chars[avg] in '\'\"\\':
+		return bytes((('\\'+chars[avg])*2)+' ', 'utf-8')
+	else:
+		return bytes((chars[avg]*2)+' ', 'utf-8')
 	
-	if (avg >= 0) and (avg <= 7):
-		return b"  "
-	elif (avg >= 8) and (avg <= 15):
-		return b" `"
-	elif (avg >= 16) and (avg <= 23):
-		return b"``"
-	elif (avg >= 24) and (avg <= 31):
-		return b" ."
-	elif (avg >= 32) and (avg <= 39):
-		return b" ~"
-	elif (avg >= 40) and (avg <= 47):
-		return b" -"
-	elif (avg >= 48) and (avg <= 55):
-		return b".."
-	elif (avg >= 56) and (avg <= 63):
-		return b" ,"
-	elif (avg >= 64) and (avg <= 71):
-		return b"-."
-	elif (avg >= 72) and (avg <= 79):
-		return b".~"
-	elif (avg >= 80) and (avg <= 87):
-		return b" *"
-	elif (avg >= 88) and (avg <= 95):
-		return b".:"
-	elif (avg >= 96) and (avg <= 104):
-		return b"--"
-	elif (avg >= 104) and (avg <= 111):
-		return b"=~"
-	elif (avg >= 112) and (avg <= 119):
-		return b"=="
-	elif (avg >= 120) and (avg <= 127):
-		return b"!!"
-	elif (avg >= 128) and (avg <= 135):
-		return b"ii"
-	elif (avg >= 136) and (avg <= 143):
-		return b"i?"
-	elif (avg >= 144) and (avg <= 151):
-		return b"**"
-	elif (avg >= 152) and (avg <= 159):
-		return b"il"
-	elif (avg >= 160) and (avg <= 167):
-		return b"//"
-	elif (avg >= 168) and (avg <= 175):
-		return b"[]"
-	elif (avg >= 176) and (avg <= 183):
-		return b"[["
-	elif (avg >= 184) and (avg <= 191):
-		return b".$"
-	elif (avg >= 192) and (avg <= 199):
-		return b".#"
-	elif (avg >= 200) and (avg <= 207):
-		return b".%"
-	elif (avg >= 208) and (avg <= 215):
-		return b".@"
-	elif (avg >= 216) and (avg <= 223):
-		return b"oo"
-	elif (avg >= 224) and (avg <= 231):
-		return b"$$"
-	elif (avg >= 232) and (avg <= 239):
-		return b"##"
-	elif (avg >= 240) and (avg <= 247):
-		return b"%%"
-	elif (avg >= 248) and (avg <= 255):
-		return b"@@"
+#def pxAvg(f, addr):
+#	f.seek(addr)
+#	px1 = struct.unpack('B', f.read(1))[0]
+#	px2 = struct.unpack('B', f.read(1))[0]
+#	px3 = struct.unpack('B', f.read(1))[0]
+#	avg = 255 - int((px1 + px2 + px3)/3) # subtract from 255 for a negative "color"
+#	
+#	if (avg >= 0) and (avg <= 7):
+#		return b" . "
+#		#return b"   "
+#	elif (avg >= 8) and (avg <= 15):
+#		return b" : "
+#		#return b" ` "
+#	elif (avg >= 16) and (avg <= 23):
+#		return b" i "
+#		#return b"`` "
+#	elif (avg >= 24) and (avg <= 31):
+#		return b" | "
+#		#return b" . "
+#	elif (avg >= 32) and (avg <= 39):
+#		return b" S "
+#		#return b" ~ "
+#	elif (avg >= 40) and (avg <= 47):
+#		return b" $ "
+#		#return b" - "
+#	elif (avg >= 48) and (avg <= 55):
+#		return b" % "
+#		#return b".. "
+#	elif (avg >= 56) and (avg <= 63):
+#		return b" # "
+#		#return b" , "
+#	elif (avg >= 64) and (avg <= 71):
+#		return b" @ "
+#		#return b"-. "
+#	elif (avg >= 72) and (avg <= 79):
+#		return b"..."
+#		#return b".~ "
+#	elif (avg >= 80) and (avg <= 87):
+#		return b".:."
+#		#return b" * "
+#	elif (avg >= 88) and (avg <= 95):
+#		return b".i."
+#		#return b".: "
+#	elif (avg >= 96) and (avg <= 104):
+#		return b".|."
+#		#return b"-- "
+#	elif (avg >= 104) and (avg <= 111):
+#		return b".S "
+#		#return b"=~ "
+#	elif (avg >= 112) and (avg <= 119):
+#		return b".$ "
+#		#return b"== "
+#	elif (avg >= 120) and (avg <= 127):
+#		return b".% "
+#		#return b"!! "
+#	elif (avg >= 128) and (avg <= 135):
+#		return b".# "
+#		#return b"ii "
+#	elif (avg >= 136) and (avg <= 143):
+#		return b".@ "
+#		#return b"i? "
+#	elif (avg >= 144) and (avg <= 151):
+#		return b"i i"
+#		#return b"** "
+#	elif (avg >= 152) and (avg <= 159):
+#		return b"| |"
+#		#return b"il "
+#	elif (avg >= 160) and (avg <= 167):
+#		return b"S S"
+#		#return b"// "
+#	elif (avg >= 168) and (avg <= 175):
+#		return b"$ $"
+#		#return b"[] "
+#	elif (avg >= 176) and (avg <= 183):
+#		return b"% %"
+#		#return b"[[ "
+#	elif (avg >= 184) and (avg <= 191):
+#		return b"# @"
+#		#return b".$ "
+#	elif (avg >= 192) and (avg <= 199):
+#		return b"@ @"
+#		#return b".# "
+#	elif (avg >= 200) and (avg <= 207):
+#		return b"@.@"
+#		#return b".% "
+#	elif (avg >= 208) and (avg <= 215):
+#		return b"S-S"
+#		#return b".@ "
+#	elif (avg >= 216) and (avg <= 223):
+#		return b"@-@"
+#		#return b"oo "
+#	elif (avg >= 224) and (avg <= 231):
+#		return b"$|$"
+#		#return b"$$ "
+#	elif (avg >= 232) and (avg <= 239):
+#		return b"%|%"
+#		#return b"## "
+#	elif (avg >= 240) and (avg <= 247):
+#		return b"#|#"
+#		#return b"%% "
+#	elif (avg >= 248) and (avg <= 255):
+#		return b"@@@"
+#		#return b"@@ "
 	
 def getData(f, addr):
 	f.seek(addr)
@@ -142,9 +189,9 @@ def colorDepth(f):
 
 def bmp2ascii_monochrome(fin, fout):
 	if (imgWidth(fin) % 32) > 0:
-		width = (imgWidth(fin) + (32 - (imgWidth(fin) % 32)))/8
+		width = int((imgWidth(fin) + (32 - (imgWidth(fin) % 32)))/8)
 	else:
-		width = imgWidth(fin)/8
+		width = int(imgWidth(fin)/8)
 	
 	iwidth = imgWidth(fin)
 	arrStart = pxArrStart(fin)
@@ -153,7 +200,11 @@ def bmp2ascii_monochrome(fin, fout):
 	boundary = range(0, width, 4)[-1:][0]
 	bitrange = 32
 	
-	print("Array start = {}\nByteWidth = {}\nWidth = {}\nHeight = {}\nBoundary = {} \n".format(arrStart, width, imgWidth(fin), height, boundary))
+	print(f'Array start = {arrStart}')
+	print(f'ByteWidth = {width}')
+	print(f'Width = {imgWidth(fin)}')
+	print(f'Height = {height}')
+	print(f'Boundary = {boundary}')
 	
 	for i in range(height-1, -1, -1):
 		for j in range(0, width, 4):
@@ -170,21 +221,32 @@ def bmp2ascii_monochrome(fin, fout):
 	
 def bmp2ascii_greyscale(fin, fout):
 	arrStart = pxArrStart(fin)
+	color_depth = colorDepth(fin)
+	n_bytes = int(color_depth/8)
 	iwidth = imgWidth(fin)
-	width = int((colorDepth(fin)*iwidth)/8)
+	bwidth = n_bytes*iwidth
 	height = imgHeight(fin)
+	padding = [0, 3, 2, 1][(bwidth % 4)]
 	px = 0
 	
-	print("Pixel array start = {}\nWidth (bytes) = {}\nWidth (px) = {}\nHeight (px) = {}\nColor depth = {} bit\n".format(arrStart, width, imgWidth(fin), height, colorDepth(fin)))
+	print(f'Pixel array start = {arrStart}')
+	print(f'Width (bytes) = {bwidth}')
+	print(f'Width (px) = {iwidth}')
+	print(f'Height (px) = {height}')
+	print(f'Color depth = {colorDepth(fin)} bit')
+	print(f'Padding = {padding} byte')
+	
+	fout.write(b'var caloocan_boy = [\'') #
 	
 	for i in range(height-1, -1, -1):
-		for j in range(0, width, 3):
-			#px = isprint(pxAvg(fin, arrStart+j+(width*i)))
-			px = pxAvg(fin, arrStart+j+(width*i))
-			#fout.write("{:c}{:c}".format(px, px))
+		for j in range(0, iwidth):
+			px = pxAvg(fin, arrStart+(j*n_bytes)+((bwidth+padding)*i), n_bytes)
 			fout.write(px)
-		fout.write(b'\n')
-
+		if i == 0:
+			fout.write(b'\'];\n')
+		else:
+			fout.write(b'\',\n\'')
+	
 def main():
 	count = 1
 	mode = 0
